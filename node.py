@@ -11,7 +11,7 @@ class NodeType:
 class Node:
     def __init__(self, x: int, y: int, node_type: NodeType):
         """
-        Node constructior
+        Node constructor
         @param x: x co-ordinate
         @param y: y co-ordinate
         @param node_type: Type of node
@@ -80,9 +80,13 @@ class Node:
         """
         U, s, V = np.linalg.svd(A, full_matrices=False)
         U_trans = U.transpose()
-        D0_inv = np.diag(s)
+        D0_inv = Node.__sigma_to_d0_inv(s, 5)
+        D0_inv = np.diag(D0_inv)
         x = np.dot(V, np.dot(D0_inv, np.dot(U_trans, C)))
+
+        # just makes sure everything is okay on numpy side
         assert np.allclose(A, np.dot(U, np.dot(np.diag(s), V)))
+
         self.x, self.y = x
 
     @staticmethod

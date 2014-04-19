@@ -117,7 +117,13 @@ class Grid:
                 # estimates co-ordinates for the current node
                 self.nodes[i].estimate_coordinates(A, C)
 
-    def analyse(self):
+    def analyse(self) -> str:
+        """
+            Analyses the results of the simulation by calculating,
+            i)  average distance between the actual point & estimated point
+            ii) standard deviation of it
+            @return: string that can be printed to a log file or console
+            """
         L0_nodes = L1_nodes = other_nodes = 0
         distances = []
         unresolved = 0
@@ -136,11 +142,10 @@ class Grid:
             # calculate distance between actual point and estimated point
             d = sqrt(pow(node.actual_x - node.x, 2) + pow(node.actual_y - node.y, 2))
             distances.append(d)
-
         avg = calc_avg(distances)
         std_dev = calc_std_dev(avg, distances)
         return 'Total Number of nodes : ' + str(len(self.nodes)) + '\n' + \
-            'L0 Nodes : ' + str(L0_nodes) + '\n' + \
+               'L0 Nodes : ' + str(L0_nodes) + '\n' + \
                'L1 Nodes : ' + str(L1_nodes) + '\n' + \
                'Other Nodes : ' + str(other_nodes) + '\n' + \
                'Unresolved Nodes : ' + str(unresolved) + '\n\n' + \
@@ -169,6 +174,11 @@ class Grid:
 
 
 def calc_avg(values):
+    """
+    Calculates the average of 'values' array
+    @param values: array for which avg is to be found
+    @return: avg of values array
+    """
     sm = 0.0
     for x in values:
         sm += x
@@ -177,6 +187,13 @@ def calc_avg(values):
 
 
 def calc_std_dev(avg, values):
+    """
+    Calculates standard deviation of the values array,
+    using the given mean (avg)
+    @param avg: mean of the values
+    @param values: array of values
+    @return: standard deviation
+    """
     sm = 0.0
     for x in values:
         sm += (avg - x) ** 2
