@@ -65,7 +65,7 @@ class Grid:
         @param error: error in location
         """
         for i in range(0, len(self.nodes)):
-            if len(self.nodes[i].neighbours) >= 3:
+            if self.nodes[i].type == NodeType.OTHER and Grid.__is_valid_candidate_to_estimate(self.nodes[i]):
                 self.nodes[i].set_node_type(NodeType.L1, error)
 
     @staticmethod
@@ -110,12 +110,42 @@ class Grid:
                 C = []
                 j = 0
                 while j < len(pre_A) and j + 1 < len(pre_A):
-                    A.append([pre_A[j][0] - pre_A[j+1][0], pre_A[j][1] - pre_A[j+1][1]])
-                    C.append(pre_C[j] - pre_C[j+1])
+                    A.append([pre_A[j][0] - pre_A[j + 1][0], pre_A[j][1] - pre_A[j + 1][1]])
+                    C.append(pre_C[j] - pre_C[j + 1])
                     j += 2
 
                 # estimates co-ordinates for the current node
                 self.nodes[i].estimate_coordinates(A, C)
+
+    def analyse(self):
+        L0_nodes = L1_nodes = other_nodes = 0
+        distances = []
+        unresolved = 0
+        for node in self.nodes:
+            if node.type == NodeType.L0:
+                L0_nodes += 1
+            elif node.type == NodeType.L1:
+                L1_nodes += 1
+            elif node.type == NodeType.OTHER:
+                other_nodes += 1
+
+            if node.x is None or node.y is None:
+                unresolved += 1
+                continue
+
+            # calculate distance between actual point and estimated point
+            d = sqrt(pow(node.actual_x - node.x, 2) + pow(node.actual_y - node.y, 2))
+            distances.append(d)
+
+        avg = calc_avg(distances)
+        std_dev = calc_std_dev(avg, distances)
+        return 'Total Number of nodes : ' + str(len(self.nodes)) + '\n' + \
+            'L0 Nodes : ' + str(L0_nodes) + '\n' + \
+               'L1 Nodes : ' + str(L1_nodes) + '\n' + \
+               'Other Nodes : ' + str(other_nodes) + '\n' + \
+               'Unresolved Nodes : ' + str(unresolved) + '\n\n' + \
+               'Avg Distance from actual point : ' + str(avg) + '\n' + \
+               'Standard Dev : ' + str(std_dev) + '\n'
 
     @staticmethod
     def distance(a: Node, b: Node):
@@ -136,3 +166,20 @@ class Grid:
         @return: distance between node1 and node2
         """
         return pow(a.x - b.x, 2) + pow(a.y - b.y, 2)
+
+
+def calc_avg(values):
+    sm = 0.0
+    for x in values:
+        sm += x
+    sm /= len(values)
+    return sm
+
+
+def calc_std_dev(avg, values):
+    sm = 0.0
+    for x in values:
+        sm += (avg - x) ** 2
+    sm /= len(values)
+    sm = sqrt(sm)
+    return sm

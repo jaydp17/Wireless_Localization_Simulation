@@ -61,6 +61,7 @@ class Node:
         @param node_type: new node type
         @param error: if it's L1 some error can be introduced
         """
+        self.type = node_type
         if node_type == NodeType.L0:
             self.x = self.actual_x
             self.y = self.actual_y

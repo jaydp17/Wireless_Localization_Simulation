@@ -2,10 +2,10 @@ from grid import *
 
 # globals
 NUM_OF_NODES = 100
-GRID_SIZE = 750
-NODE_RANGE = 250
+GRID_SIZE = 500
+NODE_RANGE = 150
 ERROR_IN_L1_NODES = 10
-NUM_L0_NODES = 10
+NUM_L0_NODES = 15
 
 
 def main():
@@ -23,6 +23,8 @@ def main():
     grid.assign_L1_nodes(ERROR_IN_L1_NODES)
 
     grid.estimate_other_nodes()
+
+    print(grid.analyse())
 
     print("done!")
 
